@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/fs"
 	"io/ioutil"
 	"log"
 	"net"
@@ -14,10 +13,10 @@ import (
 
 func ip() string {
 	ifaces, _ := net.Interfaces()
-	var ip net.IP
+	var ip = net.IPv4(127, 0, 0, 1)
 	// handle err
 	for _, i := range ifaces {
-		if i.Name == "en0" {
+		if strings.HasPrefix(i.Name, "en") {
 			addrs, _ := i.Addrs()
 			// handle err
 			for _, addr := range addrs {
@@ -60,6 +59,6 @@ func main() {
 		newdata = append(newdata, line)
 	}
 	data := strings.Join(newdata, "\n")
-	ioutil.WriteFile("./info.plist", []byte(data), fs.ModePerm)
+	ioutil.WriteFile("./info.plist", []byte(data), 0644)
 	log.Println(data)
 }
